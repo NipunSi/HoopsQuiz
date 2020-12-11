@@ -14,6 +14,10 @@
 		4214072E257F1819008763CA /* HoopsQuiz.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4214072C257F1819008763CA /* HoopsQuiz.xcdatamodeld */; };
 		42140730257F181E008763CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4214072F257F181E008763CA /* Assets.xcassets */; };
 		42140733257F181E008763CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 42140731257F181E008763CA /* LaunchScreen.storyboard */; };
+		42140740257F1A02008763CA /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4214073F257F1A02008763CA /* Player.swift */; };
+		4214074425801180008763CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4214074325801180008763CA /* Constants.swift */; };
+		425208F32582ADF500F89CFF /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425208F22582ADF500F89CFF /* MenuViewController.swift */; };
+		425208F62582AE1B00F89CFF /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425208F52582AE1B00F89CFF /* ReportViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +30,10 @@
 		4214072F257F181E008763CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		42140732257F181E008763CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		42140734257F181E008763CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4214073F257F1A02008763CA /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		4214074325801180008763CA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		425208F22582ADF500F89CFF /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		425208F52582AE1B00F89CFF /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,14 +68,42 @@
 			children = (
 				42140723257F1819008763CA /* AppDelegate.swift */,
 				42140725257F1819008763CA /* SceneDelegate.swift */,
-				42140727257F1819008763CA /* ViewController.swift */,
-				42140729257F1819008763CA /* Main.storyboard */,
+				4214073E257F19EF008763CA /* Models */,
+				4214073C257F1860008763CA /* Controllers */,
+				4214073B257F1859008763CA /* Views */,
 				4214072F257F181E008763CA /* Assets.xcassets */,
 				42140731257F181E008763CA /* LaunchScreen.storyboard */,
 				42140734257F181E008763CA /* Info.plist */,
 				4214072C257F1819008763CA /* HoopsQuiz.xcdatamodeld */,
 			);
 			path = HoopsQuiz;
+			sourceTree = "<group>";
+		};
+		4214073B257F1859008763CA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				42140729257F1819008763CA /* Main.storyboard */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4214073C257F1860008763CA /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				425208F52582AE1B00F89CFF /* ReportViewController.swift */,
+				425208F22582ADF500F89CFF /* MenuViewController.swift */,
+				42140727257F1819008763CA /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		4214073E257F19EF008763CA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4214073F257F1A02008763CA /* Player.swift */,
+				4214074325801180008763CA /* Constants.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,10 +176,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				425208F62582AE1B00F89CFF /* ReportViewController.swift in Sources */,
 				4214072E257F1819008763CA /* HoopsQuiz.xcdatamodeld in Sources */,
 				42140728257F1819008763CA /* ViewController.swift in Sources */,
 				42140724257F1819008763CA /* AppDelegate.swift in Sources */,
+				425208F32582ADF500F89CFF /* MenuViewController.swift in Sources */,
+				42140740257F1A02008763CA /* Player.swift in Sources */,
 				42140726257F1819008763CA /* SceneDelegate.swift in Sources */,
+				4214074425801180008763CA /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +340,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.NipunSingh.HoopsQuiz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -319,7 +359,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.NipunSingh.HoopsQuiz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
