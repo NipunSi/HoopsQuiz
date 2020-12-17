@@ -63,3 +63,9 @@ struct Draft: Codable {
     var roundNum: String
     var seasonYear: String
 }
+
+struct GuessedPlayer {
+    var name: String
+    var team: String
+    var result: String
+}

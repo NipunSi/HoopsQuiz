@@ -33,14 +33,16 @@ class ViewController: UIViewController {
             return 0
         }
     }
-    let gameLength = 10
+    let gameLength = 6
     
     let teams = Teams().teams
     var fetchedPlayers = [Player]()
     var shownPlayer: Player?
+    var guessedPlayers = [GuessedPlayer]()
     var points = 0
     var makes = 0
     var misses = 0
+    var skips = 0
     var secondsPassed = 0
     
     override func viewDidLoad() {
@@ -53,7 +55,9 @@ class ViewController: UIViewController {
         points = 0
         makes = 0
         misses = 0
+        skips = 0
         secondsPassed = 0
+        guessedPlayers.removeAll()
         
         pointsLabel.text = "Loading..."
         
@@ -65,17 +69,22 @@ class ViewController: UIViewController {
     }
     
     @IBAction func skipButtonPressed(_ sender: Any) {
+        teamButtonsView.isUserInteractionEnabled = false
         transitionToPlayer()
+        guessedPlayers.append(GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: shownPlayer?.teamName ?? "", result: "-"))
     }
     
     @IBAction func teamButtonPressed(_ sender: UIButton) {
         let teamSelected = sender.title(for: .normal) ?? ""
         let correctTeam = shownPlayer?.teamName
+        teamButtonsView.isUserInteractionEnabled = false
         if teamSelected == correctTeam {
             print("Correct! \(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "") is on the \(teamSelected).")
             
             points += 100
             makes += 1
+            
+            guessedPlayers.append(GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: correctTeam ?? "", result: "✓"))
             
             pointsLabel.textColor = UIColor.clear
             UIView.transition(with: pointsLabel, duration: 0.5, options: .transitionCrossDissolve) {
@@ -98,6 +107,8 @@ class ViewController: UIViewController {
             points -= 20
             misses += 1
             
+            guessedPlayers.append(GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: correctTeam ?? "", result: "X"))
+            
             pointsLabel.textColor = UIColor.clear
             UIView.transition(with: pointsLabel, duration: 0.5, options: .transitionCrossDissolve) {
                 self.pointsLabel.textColor = UIColor.red
@@ -107,9 +118,11 @@ class ViewController: UIViewController {
 
             }
             
-            UIButton.transition(with: sender, duration: 0.3, options: .transitionCrossDissolve, animations: {
-                    sender.layer.borderColor = UIColor.red.cgColor
-            }, completion: nil)
+            UIButton.transition(with: sender, duration: 0.8, options: .transitionCrossDissolve) {
+                sender.layer.borderColor = UIColor.red.cgColor
+            } completion: { _ in
+                self.transitionToPlayer()
+            }
         }
     }
     
@@ -140,6 +153,8 @@ class ViewController: UIViewController {
             UIButton.transition(with: self.teamSixButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
                 self.teamSixButton.layer.borderColor = UIColor.clear.cgColor
             }, completion: nil)
+        
+        teamButtonsView.isUserInteractionEnabled = true
     }
     
     func setUpUI() {
@@ -296,7 +311,7 @@ class ViewController: UIViewController {
         UserDefaults.incrementIntegerForKey(key: "TotalMisses", by: misses)
         UserDefaults.incrementIntegerForKey(key: "GamesPlayed", by: 1)
         
-        print("Game Over. Final stats: \n Points:\(points)\nMakes: \(makes)\nMisses:\(misses)")
+        print("Game Over. Final stats:\nPoints: \(points)\nMakes: \(makes)\nMisses: \(misses)\nSkips: \(skips)")
         
         performSegue(withIdentifier: "gameOverSegue", sender: self)
     }
@@ -308,6 +323,7 @@ class ViewController: UIViewController {
                 report.missesAmount = misses
                 report.finalPointsAmount = points
                 report.previousHigh = previousHigh
+                report.guessedPlayers = guessedPlayers
                 if points > previousHigh {
                     report.didGetCareerHigh = true
                     defaults.set(points, forKey: "CareerHigh")
