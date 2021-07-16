@@ -6,70 +6,98 @@
 //
 
 import UIKit
+import GameKit
 
-class MenuViewController: UIViewController {
+class MenuViewController: UIViewController, GKGameCenterControllerDelegate {
+    
+    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
+        print("Done")
+        dismiss(animated: true, completion: nil)
+    }
+    
 
     let defaults = UserDefaults.standard
+    var isHardMode = false
     
     @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var statsTableView: UITableView!
+    @IBOutlet weak var hardModeButton: UIButton!
+    @IBOutlet weak var leaderboardsButton: UIButton!
+    @IBOutlet weak var recordBookButton: UIButton!
+    
+    var totalMakes: Int {
+        if let makes = defaults.object(forKey: "TotalMakes") as? Int {
+            return makes
+        } else {
+            return 0
+        }
+    }
+
+    var totalMisses: Int {
+        if let misses = defaults.object(forKey: "TotalMisses") as? Int{
+            return misses
+        } else {
+            return 0
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        statsTableView.delegate = self
-        statsTableView.dataSource = self
         
         playButton.layer.cornerRadius = 10
-        playButton.layer.shadowColor = UIColor.gray.cgColor
-        playButton.layer.shadowOpacity = 0.8
-        playButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+        hardModeButton.layer.cornerRadius = 7
+
         
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        DispatchQueue.main.async {
-            self.statsTableView.reloadData()
-        }
+        leaderboardsButton.layer.cornerRadius = 10
+        leaderboardsButton.layer.borderWidth = 1
+        leaderboardsButton.layer.borderColor = UIColor.systemOrange.cgColor
+
+        recordBookButton.layer.cornerRadius = 10
+        recordBookButton.layer.borderWidth = 1
+        recordBookButton.layer.borderColor = UIColor.systemOrange.cgColor
+        
+        setUpGameCenter()
+        
     }
     
     @IBAction func playPressed(_ sender: Any) {
+        isHardMode = false
         performSegue(withIdentifier: "startGameSegue", sender: self)
     }
-}
-
-extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+    @IBAction func hardModePressed(_ sender: Any) {
+        isHardMode = true
+        performSegue(withIdentifier: "startGameSegue", sender: self)
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Record Book"
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "statCell", for: indexPath)
-        switch indexPath.row {
-        case 0:
-            cell.textLabel?.text = "Career High"
-            cell.detailTextLabel?.text = "\(defaults.object(forKey: "CareerHigh") ?? 0)"
-        case 1:
-            cell.textLabel?.text = "Total Points"
-            cell.detailTextLabel?.text = "\(defaults.object(forKey: "TotalPoints") ?? 0)"
-        case 2:
-            cell.textLabel?.text = "Total Makes"
-            cell.detailTextLabel?.text = "\(defaults.object(forKey: "TotalMakes") ?? 0)"
-        case 3:
-            cell.textLabel?.text = "Total Misses"
-            cell.detailTextLabel?.text = "\(defaults.object(forKey: "TotalMisses") ?? 0)"
-        default:
-            cell.textLabel?.text = "Games Played"
-            cell.detailTextLabel?.text = "\(defaults.object(forKey: "GamesPlayed") ?? 0)"
-        }
+    @IBAction func leaderboardsPressed(_ sender: Any) {
+        let vc = GKGameCenterViewController(leaderboardID: "com.HoopsQuiz.careerHigh", playerScope: .global, timeScope: .allTime)
+        vc.gameCenterDelegate = self
+        present(vc, animated: true, completion: nil)
         
-        return cell
+    }
+    @IBAction func recordButtonPressed(_ sender: Any) {
+        performSegue(withIdentifier: "goToRecordsSegue", sender: self)
+    }
+
+    
+    func setUpGameCenter() {
+        GKLocalPlayer.local.authenticateHandler = {[weak self] (gameCenterViewController, error) -> Void in
+            if error != nil {
+                print(error ?? "Error?")
+            } else if gameCenterViewController != nil {
+                self?.present(gameCenterViewController!, animated: true, completion: nil)
+            } else if (GKLocalPlayer.local.isAuthenticated ) {
+                //load game center
+            } else {
+                //User doesnt have game center
+            }
+        }
     }
     
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "startGameSegue" {
+                let vc = segue.destination as! GameViewController
+                vc.isHardMode = isHardMode
+        }
+    }
 }

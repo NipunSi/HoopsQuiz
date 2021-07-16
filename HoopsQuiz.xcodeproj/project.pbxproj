@@ -9,13 +9,18 @@
 /* Begin PBXBuildFile section */
 		42140724257F1819008763CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42140723257F1819008763CA /* AppDelegate.swift */; };
 		42140726257F1819008763CA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42140725257F1819008763CA /* SceneDelegate.swift */; };
-		42140728257F1819008763CA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42140727257F1819008763CA /* ViewController.swift */; };
+		42140728257F1819008763CA /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42140727257F1819008763CA /* GameViewController.swift */; };
 		4214072B257F1819008763CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 42140729257F1819008763CA /* Main.storyboard */; };
 		4214072E257F1819008763CA /* HoopsQuiz.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4214072C257F1819008763CA /* HoopsQuiz.xcdatamodeld */; };
 		42140730257F181E008763CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4214072F257F181E008763CA /* Assets.xcassets */; };
 		42140733257F181E008763CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 42140731257F181E008763CA /* LaunchScreen.storyboard */; };
 		42140740257F1A02008763CA /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4214073F257F1A02008763CA /* Player.swift */; };
 		4214074425801180008763CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4214074325801180008763CA /* Constants.swift */; };
+		422BEF14258FF12C0079D595 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 422BEF13258FF12C0079D595 /* GameKit.framework */; };
+		422BEF1725902E0F0079D595 /* RecordsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422BEF1625902E0F0079D595 /* RecordsViewController.swift */; };
+		4250206F2593EBF600615086 /* makeSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4250206C2593EBF600615086 /* makeSound.wav */; };
+		425020712593EBF600615086 /* buzzerSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4250206E2593EBF600615086 /* buzzerSound.wav */; };
+		4250207A2594032200615086 /* missSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 425020792594032200615086 /* missSound.wav */; };
 		425208F32582ADF500F89CFF /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425208F22582ADF500F89CFF /* MenuViewController.swift */; };
 		425208F62582AE1B00F89CFF /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425208F52582AE1B00F89CFF /* ReportViewController.swift */; };
 /* End PBXBuildFile section */
@@ -24,7 +29,7 @@
 		42140720257F1819008763CA /* HoopsQuiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HoopsQuiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		42140723257F1819008763CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		42140725257F1819008763CA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		42140727257F1819008763CA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		42140727257F1819008763CA /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		4214072A257F1819008763CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4214072D257F1819008763CA /* HoopsQuiz.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HoopsQuiz.xcdatamodel; sourceTree = "<group>"; };
 		4214072F257F181E008763CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -32,6 +37,11 @@
 		42140734257F181E008763CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4214073F257F1A02008763CA /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		4214074325801180008763CA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		422BEF13258FF12C0079D595 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		422BEF1625902E0F0079D595 /* RecordsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordsViewController.swift; sourceTree = "<group>"; };
+		4250206C2593EBF600615086 /* makeSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = makeSound.wav; path = "../../../../../Downloads/miss,swish,endGame/makeSound.wav"; sourceTree = "<group>"; };
+		4250206E2593EBF600615086 /* buzzerSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = buzzerSound.wav; path = "../../../../../Downloads/miss,swish,endGame/buzzerSound.wav"; sourceTree = "<group>"; };
+		425020792594032200615086 /* missSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = missSound.wav; path = ../../../../../Downloads/missSound.wav; sourceTree = "<group>"; };
 		425208F22582ADF500F89CFF /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		425208F52582AE1B00F89CFF /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -41,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				422BEF14258FF12C0079D595 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,6 +63,7 @@
 			children = (
 				42140722257F1819008763CA /* HoopsQuiz */,
 				42140721257F1819008763CA /* Products */,
+				422BEF12258FF12C0079D595 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,11 +78,12 @@
 		42140722257F1819008763CA /* HoopsQuiz */ = {
 			isa = PBXGroup;
 			children = (
+				4250206B2593EBEA00615086 /* SFX */,
 				42140723257F1819008763CA /* AppDelegate.swift */,
 				42140725257F1819008763CA /* SceneDelegate.swift */,
 				4214073E257F19EF008763CA /* Models */,
-				4214073C257F1860008763CA /* Controllers */,
 				4214073B257F1859008763CA /* Views */,
+				4214073C257F1860008763CA /* Controllers */,
 				4214072F257F181E008763CA /* Assets.xcassets */,
 				42140731257F181E008763CA /* LaunchScreen.storyboard */,
 				42140734257F181E008763CA /* Info.plist */,
@@ -90,9 +103,10 @@
 		4214073C257F1860008763CA /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				422BEF1625902E0F0079D595 /* RecordsViewController.swift */,
 				425208F52582AE1B00F89CFF /* ReportViewController.swift */,
 				425208F22582ADF500F89CFF /* MenuViewController.swift */,
-				42140727257F1819008763CA /* ViewController.swift */,
+				42140727257F1819008763CA /* GameViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -104,6 +118,24 @@
 				4214074325801180008763CA /* Constants.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		422BEF12258FF12C0079D595 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				422BEF13258FF12C0079D595 /* GameKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4250206B2593EBEA00615086 /* SFX */ = {
+			isa = PBXGroup;
+			children = (
+				4250206E2593EBF600615086 /* buzzerSound.wav */,
+				4250206C2593EBF600615086 /* makeSound.wav */,
+				425020792594032200615086 /* missSound.wav */,
+			);
+			path = SFX;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -163,9 +195,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4250206F2593EBF600615086 /* makeSound.wav in Resources */,
 				42140733257F181E008763CA /* LaunchScreen.storyboard in Resources */,
+				425020712593EBF600615086 /* buzzerSound.wav in Resources */,
 				42140730257F181E008763CA /* Assets.xcassets in Resources */,
 				4214072B257F1819008763CA /* Main.storyboard in Resources */,
+				4250207A2594032200615086 /* missSound.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,7 +213,8 @@
 			files = (
 				425208F62582AE1B00F89CFF /* ReportViewController.swift in Sources */,
 				4214072E257F1819008763CA /* HoopsQuiz.xcdatamodeld in Sources */,
-				42140728257F1819008763CA /* ViewController.swift in Sources */,
+				422BEF1725902E0F0079D595 /* RecordsViewController.swift in Sources */,
+				42140728257F1819008763CA /* GameViewController.swift in Sources */,
 				42140724257F1819008763CA /* AppDelegate.swift in Sources */,
 				425208F32582ADF500F89CFF /* MenuViewController.swift in Sources */,
 				42140740257F1A02008763CA /* Player.swift in Sources */,
@@ -331,13 +367,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 5YP4T32B58;
 				INFOPLIST_FILE = HoopsQuiz/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.NipunSingh.HoopsQuiz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -351,13 +388,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 5YP4T32B58;
 				INFOPLIST_FILE = HoopsQuiz/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.NipunSingh.HoopsQuiz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

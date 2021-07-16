@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import GameKit
 
 class TitleTableViewCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
@@ -37,37 +38,20 @@ class ReportViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if didGetCareerHigh {
+            updateScore()
+        }
+    }
 
-       // setUpTable()
+    func updateScore() {
+        GKLeaderboard.submitScore(finalPointsAmount, context: 0, player: GKLocalPlayer.local, leaderboardIDs: ["com.HoopsQuiz.careerHigh"]) { (error) in
+            if error != nil {
+                print("Error saving score: \(error!)")
+            } else {
+                print("Updated career high in game center to \(self.finalPointsAmount).")
+            }
+        }
     }
-    
-    @IBAction func playAgainPressed(_ sender: Any) {
-        self.presentingViewController?.dismiss(animated: true, completion: nil)
-    }
-    
-    @IBAction func backToMenuPressed(_ sender: Any) {
-        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
-    }
-    
-//    func setUpTable() {
-//        makesLabel.text = "Makes x\(makesAmount)"
-//        makesPointsLabel.text = "+\(makesAmount * 100)"
-//
-//        missesLabel.text = "Misses x\(missesAmount)"
-//        missesPointsLabel.text = "-\(missesAmount * 20)"
-//
-//        finalPointsLabel.text = "\(finalPointsAmount)"
-//
-//        if didGetCareerHigh {
-//            previousRecordLabel.text = "Previous Career High"
-//            careerHighLabel.text = "You hit a new career high!"
-//        } else {
-//            let makesNeeded = Int(((Float(previousHigh) - Float(finalPointsAmount)) / 100).rounded(.up))
-//            careerHighLabel.text = "\(makesNeeded) makes from a career high."
-//        }
-//        previousRecordPointsLabel.text = "\(previousHigh)"
-//
-//    }
     
     // MARK: - Table view data source
 
@@ -114,71 +98,83 @@ class ReportViewController: UITableViewController {
         switch (indexPath.section) {
         case 0:
             let cell = self.tableView.dequeueReusableCell(withIdentifier: "titleCell", for: indexPath) as! TitleTableViewCell
+            cell.imageView?.image = nil
             cell.title.text = "Game Over"
             return cell
             
         case 1:
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+            let cell = self.tableView.dequeueReusableCell(withIdentifier: "statCell", for: indexPath)
+            cell.imageView?.image = nil
+
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "Makes x\(makesAmount)"
-                cell.detailTextLabel?.text = "+\(makesAmount * 100)"
+                cell.detailTextLabel?.text = "+\(makesAmount * 100) points"
                 cell.detailTextLabel?.textColor = UIColor.green
             case 1:
                 cell.textLabel?.text = "Misses x\(missesAmount)"
-                cell.detailTextLabel?.text = "+\(missesAmount * 20)"
+                cell.detailTextLabel?.text = "-\(missesAmount * 20) points"
                 cell.detailTextLabel?.textColor = UIColor.red
             default:
                 cell.textLabel?.text = "Final Score"
                 cell.textLabel?.font = .boldSystemFont(ofSize: 20)
-                cell.detailTextLabel?.text = "\(finalPointsAmount)"
+                cell.detailTextLabel?.text = "\(finalPointsAmount) points"
                 cell.detailTextLabel?.font = .boldSystemFont(ofSize: 20)
 
             }
             return cell
             
         case 2:
-          
+
             if didGetCareerHigh {
                 switch indexPath.row {
                 case 0:
-                    let cell = self.tableView.dequeueReusableCell(withIdentifier: "titleCell", for: indexPath)
-                    cell.textLabel?.text = "You hit a new career high!"
-                    cell.textLabel?.font = .boldSystemFont(ofSize: 20)
+                    let cell = self.tableView.dequeueReusableCell(withIdentifier: "titleCell", for: indexPath) as! TitleTableViewCell
+                    cell.imageView?.image = nil
+
+                    cell.title.text = "You hit a new career high!"
+                    cell.title?.font = .boldSystemFont(ofSize: 24)
+                    cell.backgroundColor = .secondarySystemBackground
                     return cell
                 default:
-                    let cell = self.tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+                    let cell = self.tableView.dequeueReusableCell(withIdentifier: "statCell", for: indexPath)
+                    cell.imageView?.image = nil
+
                     cell.textLabel?.text = "Previous Career High"
-                    cell.detailTextLabel?.text = "\(previousHigh)"
+                    cell.detailTextLabel?.text = "\(previousHigh) points"
                     return cell
                 }
               
             } else {
-                let cell = self.tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+                let cell = self.tableView.dequeueReusableCell(withIdentifier: "statCell", for: indexPath)
+                cell.imageView?.image = nil
+
                 cell.textLabel?.text = "Career High"
-                cell.detailTextLabel?.text = "\(previousHigh)"
+                cell.detailTextLabel?.text = "\(previousHigh) points"
                 return cell
             }
             
         case 3:
+            let cell = self.tableView.dequeueReusableCell(withIdentifier: "buttonCell", for: indexPath) as! ButtonTableViewCell
+            cell.imageView?.image = nil
             switch indexPath.row {
             case 0:
-                let cell = self.tableView.dequeueReusableCell(withIdentifier: "buttonCell", for: indexPath) as! ButtonTableViewCell
                 cell.buttonName.text = "Play Again"
+                cell.buttonName.font = .boldSystemFont(ofSize: 20)
                 return cell
             default:
-                let cell = self.tableView.dequeueReusableCell(withIdentifier: "buttonCell", for: indexPath) as! ButtonTableViewCell
                 cell.buttonName.text = "Main Menu"
                 return cell
             }
         default:
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
             
+            let cell = self.tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+            cell.imageView?.image = nil
+
             let player = guessedPlayers?[indexPath.row]
             cell.imageView?.image = UIImage(named: player?.team ?? "Basketball")
             cell.textLabel?.text = "\(indexPath.row + 1). \(player?.name ?? "")"
             cell.detailTextLabel?.text = player?.result
-            cell.detailTextLabel?.font = .boldSystemFont(ofSize: 20)
 
             switch player?.result {
             case "✓":
@@ -204,6 +200,8 @@ class ReportViewController: UITableViewController {
             print("tapped \(sectionRow)")
         }
     }
+    
+    
     
     
 }

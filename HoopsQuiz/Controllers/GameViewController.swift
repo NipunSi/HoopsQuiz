@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import AVFoundation
 
-class ViewController: UIViewController {
+class GameViewController: UIViewController {
     @IBOutlet weak var timerLabel: UILabel!
     @IBOutlet weak var pointsLabel: UILabel!
+    @IBOutlet weak var skipButton: UIButton!
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var infoLabel: UILabel!
@@ -23,17 +25,18 @@ class ViewController: UIViewController {
     @IBOutlet weak var teamSixButton: UIButton!
     
     let defaults = UserDefaults.standard
+    var audioPlayer: AVPlayer!
     
     var previousHigh: Int {
         if defaults.object(forKey: "CareerHigh") != nil {
-            print("Previous Career High: \(defaults.object(forKey: "CareerHigh") ?? 1)")
             return defaults.object(forKey: "CareerHigh") as! Int
         } else {
-            print("No Previous Career High")
             return 0
         }
     }
-    let gameLength = 6
+    
+    let gameLength = 60
+    var isHardMode: Bool = false
     
     let teams = Teams().teams
     var fetchedPlayers = [Player]()
@@ -45,9 +48,21 @@ class ViewController: UIViewController {
     var skips = 0
     var secondsPassed = 0
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        overrideUserInterfaceStyle = .light
         
+        skipButton.isExclusiveTouch = true
+        teamOneButton.isExclusiveTouch = true
+        teamTwoButton.isExclusiveTouch = true
+        teamThreeButton.isExclusiveTouch = true
+        teamFourButton.isExclusiveTouch = true
+        teamFiveButton.isExclusiveTouch = true
+        teamSixButton.isExclusiveTouch = true
+        teamOneButton.isExclusiveTouch = true
+
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -60,6 +75,8 @@ class ViewController: UIViewController {
         guessedPlayers.removeAll()
         
         pointsLabel.text = "Loading..."
+        nameLabel.text = ""
+        infoLabel.text = ""
         
         teamButtonsView.isHidden = true
         
@@ -69,24 +86,27 @@ class ViewController: UIViewController {
     }
     
     @IBAction func skipButtonPressed(_ sender: Any) {
-        teamButtonsView.isUserInteractionEnabled = false
+        buttonsActive(false)
+        guessedPlayers.insert((GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: shownPlayer?.teamName ?? "", result: "-")), at: 0)
+        print("Skipped \(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")")
         transitionToPlayer()
-        guessedPlayers.append(GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: shownPlayer?.teamName ?? "", result: "-"))
     }
     
     @IBAction func teamButtonPressed(_ sender: UIButton) {
+        buttonsActive(false)
         let teamSelected = sender.title(for: .normal) ?? ""
         let correctTeam = shownPlayer?.teamName
-        teamButtonsView.isUserInteractionEnabled = false
         if teamSelected == correctTeam {
             print("Correct! \(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "") is on the \(teamSelected).")
             
             points += 100
             makes += 1
             
-            guessedPlayers.append(GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: correctTeam ?? "", result: "✓"))
+            guessedPlayers.insert((GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: shownPlayer?.teamName ?? "", result: "✓")), at: 0)
+            playAudio(sound: "makeSound")
             
             pointsLabel.textColor = UIColor.clear
+            
             UIView.transition(with: pointsLabel, duration: 0.5, options: .transitionCrossDissolve) {
                 self.pointsLabel.textColor = UIColor.green
             } completion: { _ in
@@ -100,6 +120,10 @@ class ViewController: UIViewController {
             } completion: { _ in
                 self.transitionToPlayer()
             }
+            
+            
+            //Add player to correctly guessed players array
+            let playerName = "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")"
        
         } else {
             print("Incorrect! \(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "") isn't on the \(teamSelected).")
@@ -107,7 +131,8 @@ class ViewController: UIViewController {
             points -= 20
             misses += 1
             
-            guessedPlayers.append(GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: correctTeam ?? "", result: "X"))
+            guessedPlayers.insert((GuessedPlayer(name: "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")", team: shownPlayer?.teamName ?? "", result: "X")), at: 0)
+            playAudio(sound: "missSound")
             
             pointsLabel.textColor = UIColor.clear
             UIView.transition(with: pointsLabel, duration: 0.5, options: .transitionCrossDissolve) {
@@ -154,7 +179,8 @@ class ViewController: UIViewController {
                 self.teamSixButton.layer.borderColor = UIColor.clear.cgColor
             }, completion: nil)
         
-        teamButtonsView.isUserInteractionEnabled = true
+        buttonsActive(true)
+        
     }
     
     func setUpUI() {
@@ -199,6 +225,16 @@ class ViewController: UIViewController {
         teamSixButton.layer.shadowOffset = CGSize(width: 0, height: 2)
         teamSixButton.layer.borderWidth = 3
         teamSixButton.layer.borderColor = UIColor.clear.cgColor
+    }
+    
+    func buttonsActive(_ isActive: Bool) {
+        skipButton.isUserInteractionEnabled = isActive
+        teamOneButton.isUserInteractionEnabled = isActive
+        teamTwoButton.isUserInteractionEnabled = isActive
+        teamThreeButton.isUserInteractionEnabled = isActive
+        teamFourButton.isUserInteractionEnabled = isActive
+        teamFiveButton.isUserInteractionEnabled = isActive
+        teamSixButton.isUserInteractionEnabled = isActive
     }
     
     func showPlayer() {
@@ -257,21 +293,34 @@ class ViewController: UIViewController {
                         let allPlayers = try JSONDecoder().decode(AllPlayers.self, from: data)
                         let league = allPlayers.league.standard
                         print("Got \(league.count) players.")
+                        
+                        print("Hard Mode: \(self.isHardMode)")
+                        
                         for player in league {
                             let teamName = self.teams[player.teamId]
                             let age = self.calcAge(birthday: player.dateOfBirthUTC)
                             
-                            //var draftInfo = "Undrafted"
-                            if player.draft.roundNum != "" {
-                                let draftInfo = "Drafted #\(player.draft.pickNum) in \(player.draft.seasonYear)"
-                                
-                                self.fetchedPlayers.append(Player(firstName: player.firstName, lastName: player.lastName, personId: player.personId, teamId: player.teamId, teamName: teamName, isActive: player.isActive, pos: player.pos, draft: player.draft, draftInfo: draftInfo, heightFeet: player.heightFeet, heightInches: player.heightInches, weightPounds: player.weightPounds, dateOfBirthUTC: player.dateOfBirthUTC, age: age))
+                            if self.isHardMode {
+                                if player.draft.roundNum == "" && teamName != nil {
+                                    //let draftInfo = "Drafted #\(player.draft.pickNum) in \(player.draft.seasonYear)"
+                                    let draftInfo = "Undrafted"
+                                    self.fetchedPlayers.append(Player(firstName: player.firstName, lastName: player.lastName, personId: player.personId, teamId: player.teamId, teamName: teamName, isActive: player.isActive, pos: player.pos, draft: player.draft, draftInfo: draftInfo, heightFeet: player.heightFeet, heightInches: player.heightInches, weightPounds: player.weightPounds, dateOfBirthUTC: player.dateOfBirthUTC, age: age))
+                                }
+                            } else {
+                            
+                                if player.draft.roundNum != "" && teamName != nil {
+                                    let draftInfo = "Drafted #\(player.draft.pickNum) in \(player.draft.seasonYear)"
+
+                                    self.fetchedPlayers.append(Player(firstName: player.firstName, lastName: player.lastName, personId: player.personId, teamId: player.teamId, teamName: teamName, isActive: player.isActive, pos: player.pos, draft: player.draft, draftInfo: draftInfo, heightFeet: player.heightFeet, heightInches: player.heightInches, weightPounds: player.weightPounds, dateOfBirthUTC: player.dateOfBirthUTC, age: age))
+                                }
                             }
-                            //print("\(player.firstName) \(player.lastName) from the \(teamName ?? "???")")
                             
                         }
                         print("Array has \(self.fetchedPlayers.count) players in it")
                         self.fetchedPlayers.shuffle()
+                        for guy in self.fetchedPlayers {
+                            print("\(guy.firstName) \(guy.lastName) - \(guy.draft.roundNum) - \(guy.draft.pickNum) - \(guy.draft.seasonYear)")
+                        }
                         
                         DispatchQueue.main.async {
                             self.pointsLabel.text = "\(self.points) Points"
@@ -291,6 +340,7 @@ class ViewController: UIViewController {
     }
     
     func startTimer() {
+        timerLabel.text = "\(gameLength)"
         let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
             self.secondsPassed += 1
             //let secondsRemaining = (String(format: "%02d", self.gameLength - self.secondsPassed))
@@ -313,6 +363,23 @@ class ViewController: UIViewController {
         
         print("Game Over. Final stats:\nPoints: \(points)\nMakes: \(makes)\nMisses: \(misses)\nSkips: \(skips)")
         
+        var correctGuesses: [String] = []
+        
+        for player in guessedPlayers {
+            if player.result == "✓" {
+                correctGuesses.append(player.name)
+            }
+        }
+    
+        let previousCorrectGuesses = defaults.object(forKey: "GuessedPlayers") as? [String] ?? []
+        let newCorrectGuesses = Array(combine(previousCorrectGuesses, correctGuesses))
+        defaults.set(newCorrectGuesses, forKey: "GuessedPlayers")
+        print("All Time Correctly Guesses Players(\(newCorrectGuesses.count)")
+        
+        if points > 0 {
+            playAudio(sound: "buzzerSound")
+        }
+        
         performSegue(withIdentifier: "gameOverSegue", sender: self)
     }
     
@@ -323,7 +390,7 @@ class ViewController: UIViewController {
                 report.missesAmount = misses
                 report.finalPointsAmount = points
                 report.previousHigh = previousHigh
-                report.guessedPlayers = guessedPlayers
+                report.guessedPlayers = guessedPlayers.reversed()
                 if points > previousHigh {
                     report.didGetCareerHigh = true
                     defaults.set(points, forKey: "CareerHigh")
@@ -344,6 +411,24 @@ class ViewController: UIViewController {
         let age = calcAge.year
         return age!
     }
+    
+    func playAudio(sound: String) {
+        guard let url = Bundle.main.url(forResource: sound, withExtension: "wav") else {
+                    print("error to get the wav file")
+                    return
+                }
+
+                do {
+                    audioPlayer = try AVPlayer(url: url)
+                } catch {
+                    print("audio file error")
+                }
+                audioPlayer?.play()
+    }
+    
+    func combine<T>(_ arrays: Array<T>?...) -> Set<T> {
+        return arrays.compactMap{$0}.compactMap{Set($0)}.reduce(Set<T>()){$0.union($1)}
+    }
 }
 
 extension UserDefaults {
@@ -353,4 +438,6 @@ extension UserDefaults {
         defaults.set(int + by, forKey:key)
     }
 }
+
+
 
