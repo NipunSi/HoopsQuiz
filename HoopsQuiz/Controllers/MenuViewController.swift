@@ -43,9 +43,11 @@ class MenuViewController: UIViewController, GKGameCenterControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        playButton.layer.cornerRadius = 10
-        hardModeButton.layer.cornerRadius = 7
+        playButton.layer.cornerRadius = 12.5
 
+        hardModeButton.layer.cornerRadius = 10
+        hardModeButton.layer.borderWidth = 1
+        hardModeButton.layer.borderColor = UIColor.systemOrange.cgColor
         
         leaderboardsButton.layer.cornerRadius = 10
         leaderboardsButton.layer.borderWidth = 1

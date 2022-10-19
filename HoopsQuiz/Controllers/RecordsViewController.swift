@@ -64,7 +64,11 @@ class RecordsViewController: UITableViewController {
             cell.detailTextLabel?.text = "\(totalMisses) misses"
         case 4:
             cell.textLabel?.text = "Field Goal Percentage"
-            cell.detailTextLabel?.text = "\(Int(Float(totalMakes) / Float(totalMakes + totalMisses) * 100))%"
+            if (totalMakes == 0 && totalMisses == 0) {
+                cell.detailTextLabel?.text = "-%"//"\(Int(Float(totalMakes) / Float(totalMakes + totalMisses) * 100))%"
+            } else {
+                cell.detailTextLabel?.text = "\(Int(Float(totalMakes) / Float(totalMakes + totalMisses) * 100))%"
+            }
         case 5:
             cell.textLabel?.text = "Games Played"
             cell.detailTextLabel?.text = "\(defaults.object(forKey: "GamesPlayed") ?? 0) games"

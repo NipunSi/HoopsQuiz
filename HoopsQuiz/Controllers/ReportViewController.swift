@@ -108,11 +108,12 @@ class ReportViewController: UITableViewController {
 
             switch indexPath.row {
             case 0:
-                cell.textLabel?.text = "Makes x\(makesAmount)"
+                cell.textLabel?.text = "\(makesAmount) Makes"
                 cell.detailTextLabel?.text = "+\(makesAmount * 100) points"
                 cell.detailTextLabel?.textColor = UIColor.green
+                
             case 1:
-                cell.textLabel?.text = "Misses x\(missesAmount)"
+                cell.textLabel?.text = "\(missesAmount) Misses"
                 cell.detailTextLabel?.text = "-\(missesAmount * 20) points"
                 cell.detailTextLabel?.textColor = UIColor.red
             default:

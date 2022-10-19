@@ -48,7 +48,6 @@ class GameViewController: UIViewController {
     var skips = 0
     var secondsPassed = 0
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         overrideUserInterfaceStyle = .light
@@ -61,8 +60,6 @@ class GameViewController: UIViewController {
         teamFiveButton.isExclusiveTouch = true
         teamSixButton.isExclusiveTouch = true
         teamOneButton.isExclusiveTouch = true
-
-
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -110,9 +107,9 @@ class GameViewController: UIViewController {
             UIView.transition(with: pointsLabel, duration: 0.5, options: .transitionCrossDissolve) {
                 self.pointsLabel.textColor = UIColor.green
             } completion: { _ in
-                self.pointsLabel.textColor = UIColor.label
+                self.pointsLabel.textColor = UIColor.systemOrange
                 self.pointsLabel.text = "\(self.points) Points"
-
+                
             }
             
             UIButton.transition(with: sender, duration: 0.8, options: .transitionCrossDissolve) {
@@ -121,10 +118,6 @@ class GameViewController: UIViewController {
                 self.transitionToPlayer()
             }
             
-            
-            //Add player to correctly guessed players array
-            let playerName = "\(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "")"
-       
         } else {
             print("Incorrect! \(shownPlayer?.firstName ?? "") \(shownPlayer?.lastName ?? "") isn't on the \(teamSelected).")
             
@@ -138,9 +131,9 @@ class GameViewController: UIViewController {
             UIView.transition(with: pointsLabel, duration: 0.5, options: .transitionCrossDissolve) {
                 self.pointsLabel.textColor = UIColor.red
             } completion: { _ in
-                self.pointsLabel.textColor = UIColor.label
+                self.pointsLabel.textColor = UIColor.systemOrange
                 self.pointsLabel.text = "\(self.points) Points"
-
+                
             }
             
             UIButton.transition(with: sender, duration: 0.8, options: .transitionCrossDissolve) {
@@ -152,32 +145,32 @@ class GameViewController: UIViewController {
     }
     
     func transitionToPlayer() {
-   
-            self.showPlayer()
-            
-            UIButton.transition(with: self.teamOneButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
-                self.teamOneButton.layer.borderColor = UIColor.clear.cgColor
-            }, completion: nil)
-            
-            UIButton.transition(with: self.teamTwoButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
-                self.teamTwoButton.layer.borderColor = UIColor.clear.cgColor
-            }, completion: nil)
-            
-            UIButton.transition(with: self.teamThreeButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
-                self.teamThreeButton.layer.borderColor = UIColor.clear.cgColor
-            }, completion: nil)
-            
-            UIButton.transition(with: self.teamFourButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
-                self.teamFourButton.layer.borderColor = UIColor.clear.cgColor
-            }, completion: nil)
-            
-            UIButton.transition(with: self.teamFiveButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
-                self.teamFiveButton.layer.borderColor = UIColor.clear.cgColor
-            }, completion: nil)
-            
-            UIButton.transition(with: self.teamSixButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
-                self.teamSixButton.layer.borderColor = UIColor.clear.cgColor
-            }, completion: nil)
+        
+        self.showPlayer()
+        
+        UIButton.transition(with: self.teamOneButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
+            self.teamOneButton.layer.borderColor = UIColor.clear.cgColor
+        }, completion: nil)
+        
+        UIButton.transition(with: self.teamTwoButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
+            self.teamTwoButton.layer.borderColor = UIColor.clear.cgColor
+        }, completion: nil)
+        
+        UIButton.transition(with: self.teamThreeButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
+            self.teamThreeButton.layer.borderColor = UIColor.clear.cgColor
+        }, completion: nil)
+        
+        UIButton.transition(with: self.teamFourButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
+            self.teamFourButton.layer.borderColor = UIColor.clear.cgColor
+        }, completion: nil)
+        
+        UIButton.transition(with: self.teamFiveButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
+            self.teamFiveButton.layer.borderColor = UIColor.clear.cgColor
+        }, completion: nil)
+        
+        UIButton.transition(with: self.teamSixButton, duration: 0.3, options: .transitionFlipFromTop, animations: {
+            self.teamSixButton.layer.borderColor = UIColor.clear.cgColor
+        }, completion: nil)
         
         buttonsActive(true)
         
@@ -273,77 +266,76 @@ class GameViewController: UIViewController {
     }
     
     func getPlayers() {
-            let url = URL(string: "http:data.nba.net/10s/prod/v1/2020/players.json")!
-
-            let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-              if let error = error {
+        let url = URL(string: "http:data.nba.net/10s/prod/v1/2022/players.json")!
+        
+        let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+            if let error = error {
                 print("Error with fetching films: \(error)")
                 return
-              }
-              
-              guard let httpResponse = response as? HTTPURLResponse,
-                    (200...299).contains(httpResponse.statusCode) else {
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
                 print("Error with the response, unexpected status code: \(String(describing: response))")
                 return
-              }
-
-                if let data = data {
-
-                    do {
-                        let allPlayers = try JSONDecoder().decode(AllPlayers.self, from: data)
-                        let league = allPlayers.league.standard
-                        print("Got \(league.count) players.")
+            }
+            
+            if let data = data {
+                
+                do {
+                    let allPlayers = try JSONDecoder().decode(AllPlayers.self, from: data)
+                    let league = allPlayers.league.standard
+                    print("Got \(league.count) players.")
+                    
+                    print("Hard Mode: \(self.isHardMode)")
+                    
+                    for player in league {
+                        let teamName = self.teams[player.teamId]
+                        let age = self.calcAge(birthday: player.dateOfBirthUTC)
                         
-                        print("Hard Mode: \(self.isHardMode)")
-                        
-                        for player in league {
-                            let teamName = self.teams[player.teamId]
-                            let age = self.calcAge(birthday: player.dateOfBirthUTC)
-                            
-                            if self.isHardMode {
-                                if player.draft.roundNum == "" && teamName != nil {
-                                    //let draftInfo = "Drafted #\(player.draft.pickNum) in \(player.draft.seasonYear)"
-                                    let draftInfo = "Undrafted"
-                                    self.fetchedPlayers.append(Player(firstName: player.firstName, lastName: player.lastName, personId: player.personId, teamId: player.teamId, teamName: teamName, isActive: player.isActive, pos: player.pos, draft: player.draft, draftInfo: draftInfo, heightFeet: player.heightFeet, heightInches: player.heightInches, weightPounds: player.weightPounds, dateOfBirthUTC: player.dateOfBirthUTC, age: age))
-                                }
-                            } else {
-                            
-                                if player.draft.roundNum != "" && teamName != nil {
-                                    let draftInfo = "Drafted #\(player.draft.pickNum) in \(player.draft.seasonYear)"
-
-                                    self.fetchedPlayers.append(Player(firstName: player.firstName, lastName: player.lastName, personId: player.personId, teamId: player.teamId, teamName: teamName, isActive: player.isActive, pos: player.pos, draft: player.draft, draftInfo: draftInfo, heightFeet: player.heightFeet, heightInches: player.heightInches, weightPounds: player.weightPounds, dateOfBirthUTC: player.dateOfBirthUTC, age: age))
-                                }
+                        if self.isHardMode {
+                            if player.draft.roundNum == "" && teamName != nil {
+                                //let draftInfo = "Drafted #\(player.draft.pickNum) in \(player.draft.seasonYear)"
+                                let draftInfo = "Undrafted"
+                                self.fetchedPlayers.append(Player(firstName: player.firstName, lastName: player.lastName, personId: player.personId, teamId: player.teamId, teamName: teamName, isActive: player.isActive, pos: player.pos, draft: player.draft, draftInfo: draftInfo, heightFeet: player.heightFeet, heightInches: player.heightInches, weightPounds: player.weightPounds, dateOfBirthUTC: player.dateOfBirthUTC, age: age))
                             }
+                        } else {
                             
-                        }
-                        print("Array has \(self.fetchedPlayers.count) players in it")
-                        self.fetchedPlayers.shuffle()
-                        for guy in self.fetchedPlayers {
-                            print("\(guy.firstName) \(guy.lastName) - \(guy.draft.roundNum) - \(guy.draft.pickNum) - \(guy.draft.seasonYear)")
-                        }
-                        
-                        DispatchQueue.main.async {
-                            self.pointsLabel.text = "\(self.points) Points"
-                            self.startTimer()
-                            self.showPlayer()
-                            self.teamButtonsView.isHidden = false
+                            if player.draft.roundNum != "" && teamName != nil {
+                                let draftInfo = "Drafted #\(player.draft.pickNum) in \(player.draft.seasonYear)"
+                                
+                                self.fetchedPlayers.append(Player(firstName: player.firstName, lastName: player.lastName, personId: player.personId, teamId: player.teamId, teamName: teamName, isActive: player.isActive, pos: player.pos, draft: player.draft, draftInfo: draftInfo, heightFeet: player.heightFeet, heightInches: player.heightInches, weightPounds: player.weightPounds, dateOfBirthUTC: player.dateOfBirthUTC, age: age))
+                            }
                         }
                         
-
-                    } catch {
-                        print(error)
+                    }
+                    print("Array has \(self.fetchedPlayers.count) players in it")
+                    self.fetchedPlayers.shuffle()
+                    for guy in self.fetchedPlayers {
+                        print("\(guy.firstName) \(guy.lastName) - \(guy.draft.roundNum) - \(guy.draft.pickNum) - \(guy.draft.seasonYear)")
                     }
                     
+                    DispatchQueue.main.async {
+                        self.pointsLabel.text = "\(self.points) Points"
+                        self.startTimer()
+                        self.showPlayer()
+                        self.teamButtonsView.isHidden = false
+                    }
+                    
+                    
+                } catch {
+                    print(error)
                 }
-            })
-            task.resume()
+                
+            }
+        })
+        task.resume()
     }
     
     func startTimer() {
         timerLabel.text = "\(gameLength)"
-        let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+        _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
             self.secondsPassed += 1
-            //let secondsRemaining = (String(format: "%02d", self.gameLength - self.secondsPassed))
             let secondsRemaining = self.gameLength - self.secondsPassed
             self.timerLabel.text = "\(secondsRemaining)"
             
@@ -370,7 +362,7 @@ class GameViewController: UIViewController {
                 correctGuesses.append(player.name)
             }
         }
-    
+        
         let previousCorrectGuesses = defaults.object(forKey: "GuessedPlayers") as? [String] ?? []
         let newCorrectGuesses = Array(combine(previousCorrectGuesses, correctGuesses))
         defaults.set(newCorrectGuesses, forKey: "GuessedPlayers")
@@ -385,18 +377,18 @@ class GameViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "gameOverSegue" {
-                let report = segue.destination as! ReportViewController
-                report.makesAmount = makes
-                report.missesAmount = misses
-                report.finalPointsAmount = points
-                report.previousHigh = previousHigh
-                report.guessedPlayers = guessedPlayers.reversed()
-                if points > previousHigh {
-                    report.didGetCareerHigh = true
-                    defaults.set(points, forKey: "CareerHigh")
-                } else {
-                    report.didGetCareerHigh = false
-                }
+            let report = segue.destination as! ReportViewController
+            report.makesAmount = makes
+            report.missesAmount = misses
+            report.finalPointsAmount = points
+            report.previousHigh = previousHigh
+            report.guessedPlayers = guessedPlayers.reversed()
+            if points > previousHigh {
+                report.didGetCareerHigh = true
+                defaults.set(points, forKey: "CareerHigh")
+            } else {
+                report.didGetCareerHigh = false
+            }
             
         }
     }
@@ -414,16 +406,11 @@ class GameViewController: UIViewController {
     
     func playAudio(sound: String) {
         guard let url = Bundle.main.url(forResource: sound, withExtension: "wav") else {
-                    print("error to get the wav file")
-                    return
-                }
-
-                do {
-                    audioPlayer = try AVPlayer(url: url)
-                } catch {
-                    print("audio file error")
-                }
-                audioPlayer?.play()
+            print("error to get the wav file")
+            return
+        }
+        audioPlayer = AVPlayer(url: url)
+        audioPlayer?.play()
     }
     
     func combine<T>(_ arrays: Array<T>?...) -> Set<T> {
